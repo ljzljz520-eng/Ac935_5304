@@ -74,10 +74,15 @@ func ValidateShare(actor model.Employee, link model.ShareLink, p model.PolicyDoc
 	if !actor.Active {
 		return ErrInactiveEmployee
 	}
-	if actor.Role == model.RoleDirector || strings.EqualFold(link.Department, actor.Department) {
-		return nil
+	// A share link never relaxes the published-content rule: a policy must be
+	// published and within its effective window before it may be downloaded,
+	// regardless of whether the caller holds a valid share token. This mirrors
+	// CanViewPolicy so the share path cannot bypass the "only published content"
+	// constraint that applies to ordinary employees.
+	if err := CanViewPolicy(actor, p, now); err != nil {
+		return err
 	}
-	if actor.Role == model.RoleEmployee && link.Department != "" {
+	if actor.Role == model.RoleDirector || strings.EqualFold(link.Department, actor.Department) {
 		return nil
 	}
 	return ErrDepartmentDenied
