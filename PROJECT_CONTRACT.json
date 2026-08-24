@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "production_loc": 2307,
+    "production_files": 26,
+    "production_packages": 9,
+    "test_files": 9,
+    "production_functions": 181,
+    "decision_points": 359
+  },
+  "persistence": {
+    "module": "go.etcd.io/bbolt",
+    "entities": [
+      "Employee",
+      "PolicyDocument",
+      "TrainingRecord",
+      "ScheduleFile"
+    ],
+    "reopen_test": "TestPersistenceSurvivesReopen"
+  },
+  "workflows": [
+    {
+      "steps": [
+        "主任录入科室制度草案",
+        "提交制度进入待审核状态",
+        "主任审核并设置有效期后发布",
+        "员工查询已发布制度并留下下载记录"
+      ],
+      "test": "TestWorkflowPolicyApprovalAndDownload"
+    },
+    {
+      "steps": [
+        "员工打开培训任务对应的制度",
+        "培训人员录入员工完成分数",
+        "系统保存培训记录并计算完成率",
+        "员工在仪表盘查看培训结果"
+      ],
+      "test": "TestWorkflowTrainingCompletion"
+    },
+    {
+      "steps": [
+        "主任录入科室周期排班文件",
+        "主任发布排班供科室员工查看",
+        "员工按科室和周期查询排班",
+        "仪表盘展示排班与访问汇总"
+      ],
+      "test": "TestWorkflowScheduleAndDashboard"
+    }
+  ]
+}
